@@ -8,6 +8,29 @@
     <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
 </div>
 
+<div id="user">
+    @if (ViewBag.UserList != null)
+    {
+        <ol>
+            @foreach (var user in ViewBag.UserList)
+            {
+                <li>@user</li>
+            }
+        </ol>
+    }
+</div>
+<div id="roles">
+    @if (ViewBag.Roles != null)
+    {
+        <ol>
+            @foreach (var role in ViewBag.Roles)
+            {
+                <li>@role</li>
+            }
+        </ol>
+    }
+</div>
+
 <div class="row">
     <div class="col-md-4">
         <h2>Getting started</h2>

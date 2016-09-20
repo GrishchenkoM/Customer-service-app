@@ -1,6 +1,8 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Core.Entities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -9,6 +11,10 @@ namespace Web.Models
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class ApplicationUser : IdentityUser
     {
+        public DateTime CreationDate { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
@@ -22,12 +28,13 @@ namespace Web.Models
     {
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
-        {
-        }
+        { }
 
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
         }
+
+        public DbSet<Order> Orders { get; set; }
     }
 }

@@ -6,7 +6,7 @@ namespace Web.Models
     public class ExternalLoginConfirmationViewModel
     {
         [Required]
-        [Display(Name = "Email")]
+        [Display(Name = "Почтовый ящик")]
         public string Email { get; set; }
     }
 
@@ -42,42 +42,54 @@ namespace Web.Models
     public class ForgotViewModel
     {
         [Required]
-        [Display(Name = "Email")]
+        [Display(Name = "Почтовый ящик")]
         public string Email { get; set; }
     }
 
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "Email")]
+        [Display(Name = "Почтовый ящик")]
         [EmailAddress]
         public string Email { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Password")]
+        [Display(Name = "Пароль")]
         public string Password { get; set; }
 
-        [Display(Name = "Remember me?")]
+        [Display(Name = "Запомнить?")]
         public bool RememberMe { get; set; }
     }
 
     public class RegisterViewModel
     {
+        [Required(ErrorMessage = "Введите имя.")]
+        [Display(Name = "Имя")]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "Введите фамилию.")]
+        [Display(Name = "Фамилия")]
+        public string LastName { get; set; }
+
+        [Display(Name = "Стать менеджером.")]
+        public bool IsManager { get; set; }
+
         [Required]
         [EmailAddress]
-        [Display(Name = "Email")]
+        [RegularExpression(@"^([a-zA-Z0-9_\.-]+)@([a-zA-Z0-9_\.-]+)\.([A-Za-z\.]{2,6})$", ErrorMessage = "Неверный формат почтового ящика.")]
+        [Display(Name = "Почтовый ящик")]
         public string Email { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "{0} должен быть длиной не менее {2} символов.", MinimumLength = 4)]
         [DataType(DataType.Password)]
-        [Display(Name = "Password")]
+        [Display(Name = "Пароль")]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [Display(Name = "Подтвердите пароль")]
+        [Compare("Password", ErrorMessage = "Пароли не совпадают.")]
         public string ConfirmPassword { get; set; }
     }
 
@@ -85,18 +97,18 @@ namespace Web.Models
     {
         [Required]
         [EmailAddress]
-        [Display(Name = "Email")]
+        [Display(Name = "Почтовый ящик")]
         public string Email { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "{0} должен быть длиной не менее {2} символов.", MinimumLength = 4)]
         [DataType(DataType.Password)]
-        [Display(Name = "Password")]
+        [Display(Name = "Пароль")]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [Display(Name = "Подтвердите пароль")]
+        [Compare("Password", ErrorMessage = "Пароли не совпадают.")]
         public string ConfirmPassword { get; set; }
 
         public string Code { get; set; }
@@ -106,7 +118,7 @@ namespace Web.Models
     {
         [Required]
         [EmailAddress]
-        [Display(Name = "Email")]
+        [Display(Name = "Почтовый ящик")]
         public string Email { get; set; }
     }
 }
