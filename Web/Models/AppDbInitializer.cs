@@ -8,7 +8,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Web.Models
 {
-    public class AppDbInitializer : DropCreateDatabaseAlways<ApplicationDbContext>
+    public class AppDbInitializer : DropCreateDatabaseIfModelChanges<ApplicationDbContext>
     {
         protected override void Seed(ApplicationDbContext context)
         {
@@ -35,8 +35,6 @@ namespace Web.Models
             if (result.Succeeded)
             {
                 userManager.AddToRole(admin.Id, role1.Name);
-                //userManager.AddToRole(admin.Id, role2.Name);
-                //userManager.AddToRole(admin.Id, role3.Name);
             }
 
             base.Seed(context);

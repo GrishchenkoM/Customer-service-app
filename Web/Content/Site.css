@@ -22,3 +22,8 @@ select,
 textarea {
     max-width: 280px;
 }
+
+#manager {
+    cursor: pointer;
+}
+.selected{ background: silver;}

@@ -14,7 +14,7 @@ namespace Core.Entities
         public DateTime? ShippingDateTime { get; set; }
         public string Note { get; set; }
 
-        public int ManagerId { get; set; }
-        public int UserId { get; set; }
+        public string ManagerId { get; set; }
+        public string UserId { get; set; }
     }
 }

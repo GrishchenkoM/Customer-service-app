@@ -1,0 +1,191 @@
+﻿@using System.Globalization
+@using Web.Models
+@model Web.Models.ContentModel
+
+
+
+
+@if (Model != null && Model.IsAdmin)
+{
+    <div class="col-md-6">
+        @if (Model != null)
+        {
+            <br/>
+            //Html.DropDownList("orderlist", new SelectList(Model.Managers), "Менеджеры:");
+            @ManagerList()
+            
+            <br/>
+        }
+    </div>
+}
+
+
+@CreateTable()
+
+@if (Model != null && Model.IsAdmin)
+{
+    <div class="btn-group">
+        @Html.PageLinksForAdminContent(Model.PageInfo, x => Url.Action("GetAdminContent", "Home", new {page = x}))
+    </div>
+}
+else if (Model != null && Model.IsManager)
+{
+    <div class="btn-group">
+        @Html.PageLinksForManagerContent(Model.PageInfo, x => Url.Action("GetManagerContent", "Home", new {page = x}))
+    </div>
+}
+else if(Model != null)
+{
+    <div class="btn-group">
+        @Html.PageLinksForUserContent(Model.PageInfo, x => Url.Action("GetUserContent", "Home", new { page = x }))
+    </div>
+}
+
+@helper CreateTable()
+{
+if (Model != null)
+{
+
+    if ((!Model.IsManager && !Model.IsAdmin) && (Model.UserOrders == null || !Model.UserOrders.Any()))
+    {
+        <div>
+            <br />
+            <p class="lead">Вы не сделали еще ни одного запроса</p>
+        </div>
+    }
+    else if ((Model.IsManager || Model.IsAdmin) && (Model.ServicingOrders == null || !Model.ServicingOrders.Any()))
+    {
+        <div>
+            <br/>
+            <p class="lead">Не поступило еще ни одного запроса</p>
+        </div>
+    }
+    else
+    {
+        if (Model.IsManager)
+        {
+            <table class="table" id="manager">
+                @CreateTableContent()
+            </table>
+        }
+        else
+        {
+            <table class="table">
+                @CreateTableContent()
+            </table>
+        }
+    }
+}
+}
+
+@helper CreateTableHead()
+{
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Номер</th>
+            <th>Дата создания</th>
+            <th>Дата отгрузки</th>
+            @if (Model.IsManager || Model.IsAdmin)
+            {
+                if (Model.IsManager)
+                {
+                    <th>Пользователь</th>
+                }
+                else
+                {
+                    <th>Менеджер</th>
+                    <th>Пользователь</th>
+                }
+            }
+            else
+            {
+                <th>Менеджер</th>
+            }
+            <th>Примечание</th>
+        </tr>
+    </thead>
+}
+
+@helper CreateTableContent()
+{
+    @CreateTableHead()
+
+    <tbody>
+        @FillOrdersTable()
+    </tbody>
+}
+
+@helper FillOrdersTable()
+{
+    if (Model != null)
+    {
+        if (Model.IsManager || Model.IsAdmin)
+        {
+            if (Model.ServicingOrders != null)
+            {
+                foreach (var order in Model.ServicingOrders)
+                {
+                    <tr>
+                        <td>@order.Id</td>
+                        <td>@order.Number</td>
+                        <td>@order.CreationDateTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture)</td>
+                        <td>@order.ShippingDateTime.ToString()</td>
+                        @if (Model.IsAdmin)
+                        {
+                            <td>@order.Manager</td>
+                        }
+                        <td>@order.User</td>
+                        <td>@order.Note</td>
+                    </tr>
+                }
+            }
+
+        }
+        else
+        {
+            if (Model.UserOrders != null)
+            {
+                foreach (var order in Model.UserOrders)
+                {
+                    <tr>
+                        <td>@order.Id</td>
+                        <td>@order.Number</td>
+                        <td>@order.CreationDateTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture)</td>
+                        <td>@order.ShippingDateTime.ToString()</td>
+                        <td>@order.Manager</td>
+                        <td>@order.Note</td>
+                    </tr>
+                }
+            }
+        }
+    }
+}
+
+@helper ManagerList()
+{
+    <div> Сортировать по менеджеру: 
+        @if (Model != null && Model.Manager != null)
+        {
+            @Model.Manager
+        }
+    </div>
+    <br/>
+    <select id="managerlist" name="managerlist" size="1" onchange="UpdateAdminContent(this.value)">
+        <option >Choose manager</option>
+        @if (Model != null)
+        {
+            <option value="All">All managers</option>
+
+            foreach (var manager in Model.Managers)
+            {
+                <option value="@manager.Id">@manager.FirstName @manager.LastName</option>
+            }
+        }
+        else
+        {
+            <p>Model == null</p>
+        }
+    </select>
+    <br/>
+}

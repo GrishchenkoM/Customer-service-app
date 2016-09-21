@@ -1,0 +1,89 @@
+﻿@using System.Globalization
+@model Web.Models.OrderViewModel
+
+@{
+    Layout = null;
+}
+
+<script>
+    function UpdateOrder() {
+        var viewModel = {
+            id: @Model.Id}
+        $.ajax({
+            url: '@Url.Action("UpdateOrder", "Home")',
+            type: 'POST',
+            data: viewModel,
+            success: function(model) {
+                window.UpdateIndexContent(model, '#modDialog1');
+                }
+        });
+    }
+</script>
+
+<div class="modal-content">
+    <div class="modal-header">
+        <button class="close" data-dismiss="modal" area-hidden="true">X</button>
+        <h4>Обработка запроса</h4>
+    </div>
+    <div class="modal-body">
+        <dl class="dl-horizontal">
+
+            <dd>@Html.LabelFor(x => x.Id) : @Model.Id</dd>
+            <dd>@Html.LabelFor(x => x.Number) : @Model.Number</dd>
+            <dd>@Html.LabelFor(x => x.CreationDateTime) : @Model.CreationDateTime</dd>
+            <dd>@Html.LabelFor(x => x.User) : @Model.User</dd>
+            <dd>@Html.LabelFor(x => x.Note) : @Model.Note</dd>
+
+            <dd><br /></dd>
+
+            <dd><input type="submit" id="user" value="Выгрузить запрос" onclick="UpdateOrder()" /></dd>
+
+            <dd><div id="result"></div></dd>
+        </dl>
+    </div>
+</div>
+
+
+@helper CreateTable()
+{
+if (Model != null)
+{
+        <table class="table" id="manager">
+            @CreateTableHead()
+            <tbody>
+                @FillOrdersTable()
+            </tbody>
+        </table>
+}
+else
+{
+        <p>Model == null</p>
+}
+}
+
+@helper CreateTableHead()
+{
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Номер</th>
+            <th>Дата создания</th>
+            <th>Пользователь</th>
+            <th>Примечание</th>
+        </tr>
+    </thead>
+}
+
+@helper FillOrdersTable()
+{
+if (Model != null)
+{
+        <tr>
+            <td>@Model.Id</td>
+            <td>@Model.Number</td>
+            <td>@Model.CreationDateTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture)</td>
+            <td>@Model.User</td>
+            <td>@Model.Note</td>
+        </tr>
+}
+}

@@ -1,0 +1,81 @@
+﻿@model Web.Models.ContentModel
+
+@{ Layout = null;}
+
+<script>
+    function MakeOrder(obj) {
+        console.log("make order func");
+        var viewModel = {
+            Note: $('#note').val(),
+            Manager: document.getElementById('managerlist').value.toString()
+        }
+        $.ajax({
+            url: '@Url.Action("CreateOrder", "Home")',
+            type: 'POST',
+            data: viewModel,
+            success: function (model) {
+                window.UpdateIndexContent(model);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+
+        $('textarea').keyup(function () {
+            var text = $('textarea').val().replace(new RegExp('\n', 'g'), '').replace(new RegExp(' ', 'g'), '');
+            if (text !== '') {
+                $('#userBtn').css("display", "block");
+            } else {
+                $('#userBtn').css("display", "none");
+            }
+        });
+        
+        //$('#modDialog').on('hidden.bs.modal', function () { });
+    });
+
+</script>
+
+<div class="modal-content">
+    <div class="modal-header">
+        <button class="close" data-dismiss="modal" area-hidden="true">X</button>
+        <h4>Новый запрос</h4>
+    </div>
+    <div class="modal-body">
+        <dl class="dl-horizontal">
+
+
+            <dt>Примечание:</dt>
+            <dd><fieldset><textarea id="note" name="sql"></textarea></fieldset></dd>
+
+            <dt>Менеджер:</dt>
+            <dd>@ManagerList()</dd>
+
+            <dd><br /></dd>
+
+            <dd><input type="submit" id="userBtn" value="Создать запрос" onclick="MakeOrder(this)" style="display: none" /></dd>
+
+            <dd><div id="result"></div></dd>
+
+        </dl>
+    </div>
+</div>
+
+
+@helper ManagerList()
+{
+
+    <select id="managerlist" name="managerlist" size="1">
+        <option disabled>Choose manager</option>
+        @if (Model != null)
+        {
+            foreach (var manager in Model.Managers)
+            {
+                <option value="@manager.Id">@manager.FirstName @manager.LastName</option>
+            }
+        }
+        else
+        {
+            <p>Model == null</p>
+        }
+    </select>
+}

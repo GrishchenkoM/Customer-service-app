@@ -1,6 +1,24 @@
-﻿@{
+﻿@model Web.Models.ContentModel
+@{
     ViewBag.Title = "Home Page";
+    var ajaxUser = new AjaxOptions
+    {
+        UpdateTargetId = "userContent",
+        Url = Url.Action("GetUserContent")
+    };
+    var ajaxManager = new AjaxOptions
+    {
+        UpdateTargetId = "managerContent",
+        Url = Url.Action("GetManagerContent")
+    };
+    var ajaxAdmin = new AjaxOptions
+    {
+        UpdateTargetId = "adminContent",
+        Url = Url.Action("GetAdminContent")
+    };
 }
+
+
 
 <div class="jumbotron">
     <h1>ASP.NET</h1>
@@ -8,30 +26,66 @@
     <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
 </div>
 
-<div id="user">
-    @if (ViewBag.UserList != null)
-    {
-        <ol>
-            @foreach (var user in ViewBag.UserList)
-            {
-                <li>@user</li>
-            }
-        </ol>
-    }
-</div>
-<div id="roles">
-    @if (ViewBag.Roles != null)
-    {
-        <ol>
-            @foreach (var role in ViewBag.Roles)
-            {
-                <li>@role</li>
-            }
-        </ol>
-    }
-</div>
 
 <div class="row">
+
+    @CreateNavTabs()
+
+    <div id="myTabContent" class="tab-content">
+
+        <div class="tab-pane fade active in" id="user">
+            @using (Ajax.BeginForm(ajaxUser))
+            {
+                <div id="userContent">
+                    @Html.Action("GetUserContent")
+                </div>
+            }
+
+            @* create modal view *@
+            <div id="modDialog" class="modal fade">
+                <div id="dialogContent" class="modal-dialog"></div>
+            </div>
+
+            <input type="submit" id="createOrder" value="Создать запрос" onclick="OpenCreateRequestView()"/>
+        </div>
+
+
+        @if (Model.IsManager)
+        {
+            <div class="tab-pane fade " id="manager">
+                @using (Ajax.BeginForm(ajaxManager))
+                {
+                    <div id="managerContent">
+                        @Html.Action("GetManagerContent")
+                    </div>
+                }
+
+                @* create modal view *@
+                <div id="modDialog1" class="modal fade">
+                    <div id="dialogContent1" class="modal-dialog"></div>
+                </div>
+            </div>
+        }
+        else if (Model.IsAdmin)
+        {
+            <div class="tab-pane fade " id="admin">
+                @using (Ajax.BeginForm(ajaxAdmin))
+                {
+                    
+
+                    <div id="adminContent">
+                        @Html.Action("GetAdminContent", new { managerId = ViewBag.ManagerId })
+                    </div>
+                }
+            </div>
+        }
+        
+        
+
+    </div>
+
+
+
     <div class="col-md-4">
         <h2>Getting started</h2>
         <p>
@@ -39,16 +93,177 @@
             enables a clean separation of concerns and gives you full control over markup
             for enjoyable, agile development.
         </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a>
+        </p>
     </div>
     <div class="col-md-4">
         <h2>Get more libraries</h2>
         <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a>
+        </p>
     </div>
     <div class="col-md-4">
         <h2>Web Hosting</h2>
         <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a>
+        </p>
     </div>
+
 </div>
+
+@helper CreateNavTabs()
+{
+    <ul id="myTab" class="nav nav-tabs">
+        <li class="active"><a href="#user" data-toggle="tab">Мои запросы</a></li>
+        @if (Model != null)
+        {
+            if (Model.IsManager)
+            {
+                <li class=""><a href="#manager" data-toggle="tab">Менеджер</a></li>
+            }
+            else if (Model.IsAdmin)
+            {
+                <li class=""><a href="#admin" data-toggle="tab">Администратор</a></li>
+            }
+        }
+        else
+        {
+            <li>Create navigation tabs Error. Sory!</li>
+        }
+    </ul>
+}
+
+
+<script>
+    $(document).ready(function() {
+
+        $('table[id="manager"] tr').click(function() {
+            console.log("working");
+            OpenUpdateRequestView($(this.cells[0]).text());
+        });
+
+        $('table[id="manager"] tr').click(function() {
+            $('table[id="manager"] tr').removeClass();
+            $(this).addClass('selected');
+        });
+
+
+
+        //$('#modDialog').on('hidden.bs.modal', function () { });
+    });
+</script>
+<script>
+    function OpenCreateRequestView() {
+        $(function () {
+            $.ajax({
+                url: '@Url.Action("OrderView", "Home")',
+                type: 'POST',
+                success: function(data) {
+                    $('#dialogContent').html(data);
+                    $('#modDialog').modal('show');
+                }
+            });
+        });
+    }
+
+    function OpenUpdateRequestView(id) {
+        console.log(id);
+        $(function() {
+            var viewModel = {
+                orderId: id
+            }
+            $.ajax({
+                url: '@Url.Action("UpdateOrderView", "Home")',
+                type: 'POST',
+                data: viewModel,
+                success: function(data) {
+                    $('#dialogContent1').html(data);
+                    $('#modDialog1').modal('show');
+                }
+            });
+        });
+    }
+
+    function UpdateIndexContent(model, modDialogId) {
+
+        if (modDialogId != null) {
+            $(modDialogId).modal('hide');
+        } else {
+            $('#modDialog').modal('hide');
+        }
+
+        UpdateUserContent();
+
+        try {
+            if (model.IsManager) {
+                UpdateManagerContent();
+            } else if (model.IsAdmin) {
+                UpdateAdminContent();
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    function UpdateUserContent(page) {
+        $(function() {
+            console.log("in UpdateUserContent");
+            var pageNumber = page;
+            var viewModel = {
+                page: pageNumber
+            }
+
+            $.ajax({
+                url: '@Url.Action("GetUserContent")',
+                data: viewModel,
+                success: function(data) {
+                    $('#userContent').html(data);
+                }
+            });
+        });
+    }
+    function UpdateManagerContent(page) {
+        $(function () {
+            console.log("in UpdateManagerContent");
+
+            var pageNumber = page;
+            var viewModel = {
+                page: pageNumber
+            }
+            $.ajax({
+                url: '@Url.Action("GetManagerContent")',
+                data: viewModel,
+                success: function (data) {
+                    $('#managerContent').html(data);
+                }
+            });
+        });
+    }
+    function UpdateAdminContent(managerlist, page) {
+        $(function () {
+            console.log("in UpdateAdminContent: " + managerlist);
+            console.log("in UpdateAdminContent: " + page);
+
+            var pageNumber;
+            if (page == null) {
+                pageNumber = $(".btn-primary").html();
+            } else {
+                pageNumber = page;
+            }
+
+            var viewModel = {
+                manager: managerlist,
+                page: pageNumber
+            }
+            $.ajax({
+                url: '@Url.Action("GetAdminContent")',
+                data: viewModel,
+                success: function (data) {
+                    $('#adminContent').html(data);
+                }
+            });
+        });
+    }
+
+
+</script>
