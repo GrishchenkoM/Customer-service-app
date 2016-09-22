@@ -3,7 +3,27 @@
 @model Web.Models.ContentModel
 @{ Layout = null;}
 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 
+<script>
+    $(document).ready(function () {
+        $(".color_table tr:not(#first_tr)").addClass("colors");
+
+        $(".colors:last").css("background-color", "#90ee90");
+        var trClr = $(".colors:last").css("background-color");
+        $(".colors:last").css("background-color", "white");
+
+        $(".colors").hover(function () {
+            if ($(this).css("background-color") !== trClr)
+                $(this).css("background-color", "#f0f8ff");
+        }
+        ,function () {
+            if ($(this).css("background-color") !== trClr)
+                $(this).css("background-color", "white");
+        }
+        );
+    });
+</script>
 
 @if (Model != null && Model.IsAdmin)
 {
@@ -64,7 +84,7 @@ if (Model != null)
     {
         if (Model.IsManager)
         {
-            <table class="table" id="manager">
+            <table class="table color_table" id="manager">
                 @CreateTableContent()
             </table>
         }
@@ -81,7 +101,7 @@ if (Model != null)
 @helper CreateTableHead()
 {
     <thead>
-        <tr>
+        <tr id="first_tr">
             <th>Id</th>
             <th>Номер</th>
             <th>Дата создания</th>
@@ -126,7 +146,7 @@ if (Model != null)
             {
                 foreach (var order in Model.ServicingOrders)
                 {
-                    <tr>
+                    <tr class="colors">
                         <td>@order.Id</td>
                         <td>@order.Number</td>
                         <td>@order.CreationDateTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture)</td>
@@ -147,7 +167,7 @@ if (Model != null)
             {
                 foreach (var order in Model.UserOrders)
                 {
-                    <tr>
+                    <tr class="colors">
                         <td>@order.Id</td>
                         <td>@order.Number</td>
                         <td>@order.CreationDateTime.ToUniversalTime().ToString(CultureInfo.InvariantCulture)</td>
@@ -188,3 +208,4 @@ if (Model != null)
     </select>
     <br/>
 }
+

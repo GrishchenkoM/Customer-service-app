@@ -27,3 +27,7 @@ textarea {
     cursor: pointer;
 }
 .selected{ background: silver;}
+
+.color_table th, #first_tr {
+        background-color: #d3d3d3;
+    }
