@@ -21,15 +21,31 @@
 
     $(document).ready(function () {
 
-        $('textarea').keyup(function () {
-            var text = $('textarea').val().replace(new RegExp('\n', 'g'), '').replace(new RegExp(' ', 'g'), '');
-            if (text !== '') {
-                $('#userBtn').css("display", "block");
+
+
+        try {
+            var objSel = document.getElementById("managerlist");
+            if (objSel.options.length > 1) {
+
+                $('textarea').keyup(function () {
+                    var text = $('textarea').val().replace(new RegExp('\n', 'g'), '').replace(new RegExp(' ', 'g'), '');
+                    if (text !== '') {
+                        $('#userBtn').css("display", "block");
+                    } else {
+                        $('#userBtn').css("display", "none");
+                    }
+                });
+
             } else {
                 $('#userBtn').css("display", "none");
+                $('#result').text("В системе не зарегистрировано ни одного менеджера.");
             }
-        });
-        
+        } catch (e) {
+            $('#userBtn').css("display", "none");
+            $('#result').text("В системе не зарегистрировано ни одного менеджера.");
+        }
+
+
         //$('#modDialog').on('hidden.bs.modal', function () { });
     });
 
@@ -42,10 +58,11 @@
     </div>
     <div class="modal-body">
         <dl class="dl-horizontal">
-
-
+            
             <dt>Примечание:</dt>
             <dd><fieldset><textarea id="note" name="sql"></textarea></fieldset></dd>
+
+            <dd><br/></dd>
 
             <dt>Менеджер:</dt>
             <dd>@ManagerList()</dd>

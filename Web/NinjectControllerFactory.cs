@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Ninject;
@@ -23,8 +20,6 @@ namespace Web
             _ninjectKernel.Bind<ApplicationDbContext>().ToSelf()
                 .WithConstructorArgument("DefaultConnection",
                     ConfigurationManager.ConnectionStrings[0].ConnectionString);
-
-            //_ninjectKernel.Bind<IUserRepository>().To<UserRepository>().WhenInjectedInto<DataManager>();
         }
 
         protected override IController GetControllerInstance(

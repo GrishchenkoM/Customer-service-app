@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace Web.Models
@@ -22,15 +20,13 @@ namespace Web.Models
         public IList<OrderViewModel> UserOrders { get; set; }
         public IEnumerable<OrderViewModel> ServicingOrders { get; set; }
         public List<ApplicationUser> Managers { get; set; }
-        //public int ManagerId { get; set; }
 
         public int OrderId { get; set; }
         public string Note { get; set; }
         public string Manager { get; set; }
-
         public string Response { get; set; }
-
         public PageInfo PageInfo { get; set; }
+        public string UserName { get; set; }
     }
 
     public class OrderViewModel

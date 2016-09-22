@@ -1,7 +1,7 @@
 ﻿@using System.Globalization
 @using Web.Models
 @model Web.Models.ContentModel
-
+@{ Layout = null;}
 
 
 
@@ -11,7 +11,6 @@
         @if (Model != null)
         {
             <br/>
-            //Html.DropDownList("orderlist", new SelectList(Model.Managers), "Менеджеры:");
             @ManagerList()
             
             <br/>
@@ -21,6 +20,7 @@
 
 
 @CreateTable()
+
 
 @if (Model != null && Model.IsAdmin)
 {
@@ -140,7 +140,6 @@ if (Model != null)
                     </tr>
                 }
             }
-
         }
         else
         {
@@ -172,10 +171,10 @@ if (Model != null)
     </div>
     <br/>
     <select id="managerlist" name="managerlist" size="1" onchange="UpdateAdminContent(this.value)">
-        <option >Choose manager</option>
+        <option >Выбрать менеджера</option>
         @if (Model != null)
         {
-            <option value="All">All managers</option>
+            <option value="All">Все менеджеры</option>
 
             foreach (var manager in Model.Managers)
             {

@@ -1,17 +1,97 @@
 ﻿@{
-    ViewBag.Title = "Contact";
+    ViewBag.Title = "Контакты";
 }
 <h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
+
+<h3>Наши контакты:</h3>
 
 <address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
+    <strong>ДП «КиївГазЕнерджи»</strong>
+    <br />
+    ул. Киквидзе, 4-Б<br/>
     <abbr title="Phone">P:</abbr>
-    425.555.0100
+    +380 (44) 495-04-05
 </address>
 
 <address>
-    <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
+    <strong>E-mail:</strong> <a href="mailto:contact@kyivgaz.com">contact@kyivgaz.com</a><br/>
 </address>
+
+<script src="http://maps.google.com/maps/api/js?key=AIzaSyDiwCGFTm0EMsDhpXWxg3_ChWKhwAB4Z7k" type="text/javascript"></script>
+
+<style>
+    .stationInfo {
+        height: 150px;
+        width: 250px;
+    }
+</style>
+
+<div id="canvas" style="height: 600px;"></div>
+
+<!--Устанавливаем секцию scripts, которая затем будет рендериться на мастер-странице -->
+@section scripts {
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            GetMap();
+        });
+
+        // Функция загрузки
+        function GetMap() {
+
+            google.maps.visualRefresh = true;
+            // установка основных координат
+            //var Kyiv = new google.maps.LatLng(50.4501, 30.5234);
+            var Kyiv = new google.maps.LatLng(50.4173374, 30.5478991);
+
+            // Установка общих параметров отображения карты, как масштаб, центральная точка и тип карты
+            var mapOptions = {
+                zoom: 15,
+                center: Kyiv,
+                mapTypeId: google.maps.MapTypeId.G_NORMAL_MAP
+            };
+
+            // Встраиваем гугл-карты в элемент на странице и получаем объект карты
+            var map = new google.maps.Map(document.getElementById("canvas"), mapOptions);
+
+            // Настраиваем красный маркер, который будет использоваться для центральной точки
+            //var myLatlng = new google.maps.LatLng(50.4501, 30.5234);
+            var myLatlng = new google.maps.LatLng(50.4173374, 30.5478991);
+
+            var marker = new google.maps.Marker({
+                position: myLatlng,
+                map: map,
+                title: 'Центры обслуживания'
+            });
+
+            // Берем для маркера иконку с сайта google
+            marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png')
+
+            // Получаем данные
+            $.getJSON('@Url.Action("GetData", "Home")', function(data) {
+                // Проходим по всем данным и устанавливаем для них маркеры
+                $.each(data, function(i, item) {
+                    var marker = new google.maps.Marker({
+                        'position': new google.maps.LatLng(item.GeoLong, item.GeoLat),
+                        'map': map,
+                        'title': item.PlaceName
+                    });
+
+                    // Берем для этих маркеров синие иконки с сайта google
+                    marker.setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png')
+
+                    // Для каждого объекта добавляем доп. информацию, выводимую в отдельном окне
+                    var infowindow = new google.maps.InfoWindow({
+                        content: "<div class='stationInfo'><h3>ЦО " + item.PlaceName + "</h3><div><h4>Индекс: "
+                            + item.Index + "</h4></div></div>"
+                    });
+
+                    // обработчик нажатия на маркер объекта
+                    google.maps.event.addListener(marker, 'click', function() {
+                        infowindow.open(map, marker);
+                    });
+                });
+            });
+        }
+    </script>
+}
